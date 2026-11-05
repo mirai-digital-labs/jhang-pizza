@@ -1000,7 +1000,7 @@ function openAdminStudio(station) {
   switchAdminStation(targetStation);
   renderAdminItems();
   populateAdminSettings();
-  drawTableStandee($("qrCanvas"), $("qrTableInput").value.trim());
+  refreshQRStudio();
 }
 
 function applyRoleStationPermissions() {
@@ -1103,7 +1103,7 @@ document.querySelectorAll(".admin-tab").forEach(tab => {
     if (target === "add") $("paneAdd").classList.add("active");
     if (target === "qr") {
       $("paneQR").classList.add("active");
-      drawTableStandee($("qrCanvas"), $("qrTableInput").value.trim());
+      refreshQRStudio();
     }
     if (target === "settings") $("paneSettings").classList.add("active");
   });
@@ -1645,6 +1645,7 @@ function populateAdminSettings() {
   $("cfgAdminPin").value = CONFIG.adminPin || "1234";
   if ($("cfgCashierPin")) $("cfgCashierPin").value = CONFIG.cashierPin || "2222";
   if ($("cfgKitchenPin")) $("cfgKitchenPin").value = CONFIG.kitchenPin || "3333";
+  if ($("cfgWebsiteUrl")) $("cfgWebsiteUrl").value = CONFIG.websiteUrl || "";
 }
 
 $("btnSaveConfig").addEventListener("click", () => {
@@ -1654,22 +1655,77 @@ $("btnSaveConfig").addEventListener("click", () => {
   const adminPin = $("cfgAdminPin").value.trim() || DEFAULT_CONFIG.adminPin;
   const cashierPin = ($("cfgCashierPin") ? $("cfgCashierPin").value.trim() : "") || DEFAULT_CONFIG.cashierPin;
   const kitchenPin = ($("cfgKitchenPin") ? $("cfgKitchenPin").value.trim() : "") || DEFAULT_CONFIG.kitchenPin;
+  const websiteUrl = ($("cfgWebsiteUrl") ? $("cfgWebsiteUrl").value.trim() : "");
 
-  saveConfig({ whatsapp, deliveryFee, freeDeliveryThreshold, adminPin, cashierPin, kitchenPin });
+  saveConfig({ whatsapp, deliveryFee, freeDeliveryThreshold, adminPin, cashierPin, kitchenPin, websiteUrl });
+  if ($("qrSiteUrlInput")) $("qrSiteUrlInput").value = websiteUrl || getResolvedBaseUrl();
+  refreshQRStudio();
   showToast("Settings & Category PINs saved successfully!");
   render();
 });
 
+/* ====== SMART QR STUDIO ENGINE ====== */
+function refreshQRStudio() {
+  const canvas = $("qrCanvas");
+  if (!canvas) return;
+
+  const siteInput = $("qrSiteUrlInput");
+  if (siteInput && !siteInput.value) {
+    siteInput.value = CONFIG.websiteUrl || getResolvedBaseUrl();
+  }
+
+  const siteUrl = siteInput ? siteInput.value.trim() : (CONFIG.websiteUrl || getResolvedBaseUrl());
+  const tableVal = $("qrTableInput") ? $("qrTableInput").value.trim() : "";
+
+  // Check if running on local file:// and show alert
+  const warnEl = $("qrLocalWarning");
+  if (warnEl) {
+    const isLocalFile = window.location.protocol === "file:";
+    const hasLiveLink = siteUrl && (siteUrl.startsWith("http://") || siteUrl.startsWith("https://")) && !siteUrl.includes("file://");
+    warnEl.style.display = (isLocalFile && !hasLiveLink) ? "block" : "none";
+  }
+
+  drawTableStandee(canvas, tableVal, siteUrl);
+
+  const displayEl = $("qrTargetUrlDisplay");
+  if (displayEl) {
+    displayEl.textContent = buildQRTargetUrl(tableVal, siteUrl);
+  }
+}
+
 $("btnDownloadQR").addEventListener("click", () => {
   const canvas = $("qrCanvas");
-  const tableVal = $("qrTableInput").value.trim() || "Main-Menu";
-  downloadStandeePNG(canvas, `Fri-Chicks-QR-${tableVal.replace(/\s+/g, "-")}.png`);
-  showToast("Download started!");
+  const tableVal = $("qrTableInput").value.trim();
+  const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
+  downloadStandeePNG(canvas, `Fri-Chicks-QR-Standee-${cleanTable}.png`);
+  showToast("Acrylic Standee QR Downloaded!");
 });
 
-$("qrTableInput").addEventListener("input", () => {
-  drawTableStandee($("qrCanvas"), $("qrTableInput").value.trim());
-});
+if ($("btnDownloadPureQR")) {
+  $("btnDownloadPureQR").addEventListener("click", () => {
+    const tableVal = $("qrTableInput").value.trim();
+    const siteUrl = $("qrSiteUrlInput") ? $("qrSiteUrlInput").value.trim() : "";
+    const fullUrl = buildQRTargetUrl(tableVal, siteUrl);
+
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = 400;
+    tempCanvas.height = 400;
+    drawPureQR(tempCanvas, fullUrl);
+
+    const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
+    downloadStandeePNG(tempCanvas, `Fri-Chicks-Pure-QR-${cleanTable}.png`);
+    showToast("Pure QR Code Downloaded!");
+  });
+}
+
+$("qrTableInput").addEventListener("input", refreshQRStudio);
+if ($("qrSiteUrlInput")) {
+  $("qrSiteUrlInput").addEventListener("input", refreshQRStudio);
+  $("qrSiteUrlInput").addEventListener("change", () => {
+    saveConfig({ websiteUrl: $("qrSiteUrlInput").value.trim() });
+    if ($("cfgWebsiteUrl")) $("cfgWebsiteUrl").value = $("qrSiteUrlInput").value.trim();
+  });
+}
 
 /* ==========================================================================
    REAL-TIME CROSS-TAB SYNC (BROADCASTCHANNEL & STORAGE)

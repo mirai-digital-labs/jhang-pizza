@@ -10,6 +10,7 @@ const DEFAULT_CONFIG = {
   adminPin: "1234",      // 1. Super Admin / Owner PIN
   cashierPin: "2222",    // 2. Cashier POS PIN
   kitchenPin: "3333",    // 3. Kitchen KDS PIN
+  websiteUrl: "",        // Live Website / Domain URL for QR codes
   currency: "Rs",
   currencyUr: "روپے"
 };

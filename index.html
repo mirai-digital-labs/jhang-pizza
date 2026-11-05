@@ -629,24 +629,48 @@
 
       <!-- TAB 4: SMART QR CODE STUDIO & DOWNLOAD -->
       <div class="admin-tab-pane" id="paneQR">
-        <h4 style="margin-bottom:6px">📱 Table Stand QR Code Generator</h4>
+        <h4 style="margin-bottom:6px">📱 Smart Table Stand QR Studio</h4>
         <p style="font-size:12.5px;color:var(--muted)">
-          Generate high-resolution printable QR codes with the Fri-Chicks logo for table acrylic stands or takeaway flyers.
+          Generate standard ISO/IEC 18004 scannable QR codes with Fri-Chicks logo for table acrylic stands, stickers & flyers.
         </p>
 
-        <div style="margin:12px 0">
-          <label style="font-size:12.5px;font-weight:700">Table Number (Optional):</label>
-          <input type="text" class="form-input" id="qrTableInput" placeholder="e.g. Table 5 (or leave blank for main menu)">
+        <!-- Local File Warning Note (Shown when opened as file://) -->
+        <div id="qrLocalWarning" style="display:none;background:#FEF3C7;border:1px solid #F59E0B;border-radius:12px;padding:10px 12px;margin:10px 0;font-size:12px;color:#92400E">
+          <b>⚠️ کمپیوٹر پر لوکل فائل نوٹس (Local File Alert):</b><br>
+          آپ اس وقت لوکل پی سی (<code>file://</code>) پر ہیں۔ موبائل کیمرے لوکل کمپیوٹر کی فائلز نہیں کھول سکتے۔ موبائل فون پر سائٹ کھولنے کے لیے اپنا آن لائن ویب سائٹ لنک (مثلاً Vercel, Netlify یا Wi-Fi IP) نیچے درج کریں۔
+        </div>
+
+        <div style="margin:12px 0 6px">
+          <label style="font-size:12px;font-weight:700">🌐 Website / Live Domain Link (ویب سائٹ ایڈریس):</label>
+          <input type="text" class="form-input" id="qrSiteUrlInput" placeholder="https://fri-chicks-menu.vercel.app">
+        </div>
+
+        <div style="margin:6px 0 10px">
+          <label style="font-size:12px;font-weight:700">🍽️ Table Number (ٹیبل نمبر - خالی چھوڑنے پر مین مینو بنے گا):</label>
+          <input type="text" class="form-input" id="qrTableInput" placeholder="e.g. 5 or Table 5">
+        </div>
+
+        <!-- Live Target URL Display -->
+        <div style="background:#F3F4F6;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:12px;display:flex;align-items:center;gap:6px">
+          <span>🔗</span>
+          <b style="color:var(--muted)">Scans To:</b>
+          <code id="qrTargetUrlDisplay" style="color:var(--blue);font-weight:800;word-break:break-all">-</code>
         </div>
 
         <div class="qr-preview-box">
           <canvas id="qrCanvas" width="500" height="660"></canvas>
         </div>
 
-        <button class="admin-btn admin-btn-primary" style="width:100%;padding:14px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px" id="btnDownloadQR">
-          <span>⬇️</span>
-          <span>Download Print-Ready QR Standee (PNG)</span>
-        </button>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+          <button type="button" class="admin-btn admin-btn-primary" style="padding:14px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px" id="btnDownloadQR">
+            <span>⬇️</span>
+            <span>Download Acrylic Standee (500x660 PNG)</span>
+          </button>
+          <button type="button" class="admin-btn admin-btn-outline" style="padding:11px;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:8px" id="btnDownloadPureQR">
+            <span>🔲</span>
+            <span>Download Pure QR Code Only (PNG)</span>
+          </button>
+        </div>
       </div>
 
       <!-- TAB 5: RESTAURANT SETTINGS & BACKUP -->
@@ -655,6 +679,9 @@
 
         <label style="font-size:12px;font-weight:700">WhatsApp Number (Without '+')</label>
         <input type="text" class="form-input" id="cfgWhatsApp">
+
+        <label style="font-size:12px;font-weight:700;margin-top:8px;display:block">Website / Live Domain URL (ویب سائٹ ایڈریس برائے QR کوڈ)</label>
+        <input type="text" class="form-input" id="cfgWebsiteUrl" placeholder="https://fri-chicks-menu.vercel.app">
 
         <label style="font-size:12px;font-weight:700;margin-top:8px;display:block">Delivery Fee (Rs)</label>
         <input type="number" class="form-input" id="cfgDeliveryFee">
