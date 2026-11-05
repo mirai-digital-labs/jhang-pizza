@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Fri-Chicks Jhang | Smart QR Menu & WhatsApp Ordering</title>
+<meta name="description" content="Fri-Chicks Jhang official smart digital QR menu. Crispy Fried Chicken, Zinger Burgers, Pizzas, Deals & WhatsApp Ordering.">
+<meta name="theme-color" content="#F5A12E">
+
+<!-- Open Graph for Social & WhatsApp Sharing -->
+<meta property="og:title" content="Fri-Chicks Jhang - Smart QR Menu & WhatsApp Order">
+<meta property="og:description" content="Order fresh Crispy Chicken, Burgers, Pizzas & Deals directly on WhatsApp. Secret Recipe Since 2002.">
+<meta property="og:image" content="assets/logo.png">
+<meta property="og:type" content="website">
+
+<link rel="icon" type="image/png" href="assets/logo.png">
+
+<!-- Modular Professional Stylesheets -->
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/carousel.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- Toast Notification Message (With Undo Capability) -->
+  <div class="toast-msg" id="toast"></div>
+
+  <!-- Demo Notice Top Banner -->
+  <div class="demo-banner" id="demoBanner">
+    <span>⚠️</span>
+    <span id="demoText">DEMO SAMPLE – prices & items are examples only</span>
+  </div>
+
+  <!-- Table Detected Banner (When Scanned with QR URL ?table=X) -->
+  <div class="table-alert-bar hidden" id="tableDetectedBar">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span>🍽️</span>
+      <span id="tableDetectedText">Ordering for Table</span>
+      <span class="table-alert-badge" id="tableBadgeNumber">Table 1</span>
+    </div>
+    <button type="button" class="table-pill-btn" id="btnChangeTable" style="margin-inline-start:auto">
+      <span>✏️</span>
+      <span id="tableChangeBtnText">Change / تبدیل کریں</span>
+    </button>
+  </div>
+
+  <!-- =======================================================
+       1. TOP HERO BANNER WITH OVERLAPPING CENTER-DOWN LOGO
+       (Ultra-HD Crisp Imagery, No navbar, Pins logo on scroll)
+       ======================================================= -->
+  <div class="hero-banner-wrap">
+    <div class="hero-carousel-container">
+      <div class="hero-carousel" id="heroCarousel">
+        <!-- Slide 1: Delicious Deal In Town (Official Wide HD Banner) -->
+        <div class="carousel-slide" data-slide="0">
+          <img src="assets/banners/banner1.jpg" alt="Special Delicious Deal" loading="eager">
+          <div class="carousel-overlay">
+            <span class="carousel-tag">🔥 Best Deal in Town</span>
+            <div class="carousel-title">Zinger Burger, Loaded Fries & Drink</div>
+            <div class="carousel-subtitle">Fresh, hot & secret recipe crispy crunch</div>
+          </div>
+        </div>
+        <!-- Slide 2: Super Delicious Chicken Sajji with Rice (Ultra-HD Food Visual) -->
+        <div class="carousel-slide" data-slide="1">
+          <img src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=1200&h=675&fit=crop&q=95&auto=format" alt="Chicken Sajji with Rice" loading="lazy">
+          <div class="carousel-overlay">
+            <span class="carousel-tag">🍗 Chef's Charcoal Sajji</span>
+            <div class="carousel-title">Chicken Sajji with Full Sajji Rice • Rs 1,999</div>
+            <div class="carousel-subtitle">1 Full Sajji + Aromatic Spiced Rice + 2 Special Sauces</div>
+          </div>
+        </div>
+        <!-- Slide 3: Winters Special Pizza & Hot Buffalo Wings (Ultra-HD Melted Cheese Pull) -->
+        <div class="carousel-slide" data-slide="2">
+          <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&h=675&fit=crop&q=95&auto=format" alt="Winters Special Pizza & Wings" loading="lazy">
+          <div class="carousel-overlay">
+            <span class="carousel-tag">🍕 Winter Special Combo</span>
+            <div class="carousel-title">Special Pizza + 5 Hot Buffalo Wings • Rs 1,850</div>
+            <div class="carousel-subtitle">1 Large Stuffed Pizza + 5 Hot Wings + 1L Cold Drink</div>
+          </div>
+        </div>
+        <!-- Slide 4: Karizma Deal (Ultra-HD Crispy Zinger Duo) -->
+        <div class="carousel-slide" data-slide="3">
+          <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=1200&h=675&fit=crop&q=95&auto=format" alt="Karizma Deal" loading="lazy">
+          <div class="carousel-overlay">
+            <span class="carousel-tag">🍔 Karizma Deal</span>
+            <div class="carousel-title">2 Zingers + Fries + Cold Drink • Rs 999</div>
+            <div class="carousel-subtitle">Double Crispy Chicken Fillets + Regular Fries + Drink</div>
+          </div>
+        </div>
+        <!-- Slide 5: Fast Home & Office Delivery Across Jhang -->
+        <div class="carousel-slide" data-slide="4">
+          <img src="https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=1200&h=675&fit=crop&q=95&auto=format" alt="Fast Delivery" loading="lazy">
+          <div class="carousel-overlay">
+            <span class="carousel-tag">🛵 Fast Delivery</span>
+            <div class="carousel-title">Home & Office Delivery Across Jhang</div>
+            <div class="carousel-subtitle">Call 0300 0626250 or order directly on WhatsApp</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carousel Dot Indicators -->
+      <div class="carousel-dots" id="carouselDots">
+        <div class="carousel-dot active" data-index="0"></div>
+        <div class="carousel-dot" data-index="1"></div>
+        <div class="carousel-dot" data-index="2"></div>
+        <div class="carousel-dot" data-index="3"></div>
+        <div class="carousel-dot" data-index="4"></div>
+      </div>
+    </div>
+
+    <!-- Center-Down Overlapping Logo (Pins to center top on scroll) -->
+    <div class="hero-logo-anchor" id="heroLogoAnchor">
+      <div class="main-brand-logo" id="mainBrandLogo" title="Fri-Chicks Jhang">
+        <img src="assets/logo.png" alt="Fri-Chicks Logo" onerror="this.parentElement.innerHTML='<b style=\'color:#D97706;font-size:20px\'>FC</b>'">
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       SLIM OFFER / TEXT BAR (Appears on scroll with pinned logo)
+       (Urdu descenders clipping fixed with generous vertical space)
+       ======================================================= -->
+  <div class="slim-offer-bar" id="slimOfferBar">
+    <div class="slim-bar-top">
+      <div class="slim-bar-left">
+        <button class="slim-btn" id="slimLangBtn">
+          <span>🌐</span>
+          <span id="langBtnText">اردو</span>
+        </button>
+      </div>
+
+      <!-- Center space reserved for pinned logo -->
+      <div style="width:50px"></div>
+
+      <div class="slim-bar-right">
+        <button class="slim-btn slim-cart-btn" id="slimCartBtn">
+          <span>🛒</span>
+          <span class="slim-cart-count" id="slimCartCount">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="slim-offer-ticker" id="slimOfferTicker">
+      🔥 Flat 10% Off on Table Orders • Free Delivery above Rs 2,000 • Call: 0300 0626250
+    </div>
+  </div>
+
+  <!-- Restaurant Details Info Card -->
+  <div class="info-card">
+    <div>
+      <strong id="l_open">⏰ Timing</strong>
+      <span id="v_open">12:00 PM - 02:00 AM (Daily)</span>
+    </div>
+    <div>
+      <strong id="l_loc">📍 Location</strong>
+      <span id="v_loc">Sargodha Road, Jhang Sadar</span>
+      <br>
+      <a class="map-link" href="https://maps.google.com/?q=Fri-Chicks+Sargodha+Road+Jhang" target="_blank">Google Maps ↗</a>
+    </div>
+  </div>
+
+  <!-- Live Search Bar -->
+  <div class="search-container">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-box" id="searchInput" placeholder="Search pizza, burger, deals...">
+    <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+  </div>
+
+  <!-- Sticky Categories Navigation Chips -->
+  <div class="chips-wrap">
+    <nav class="chips" id="chipsNav"></nav>
+  </div>
+
+  <!-- Main Menu Items List -->
+  <main id="menuContainer"></main>
+
+  <!-- Footer with Owner Admin Trigger -->
+  <footer>
+    <div id="footerText"></div>
+    <button class="admin-trigger-link" id="openAdminBtn">
+      <span>⚙️</span>
+      <span id="adminBtnLabel">Owner Admin Panel / مینو ایڈمن</span>
+    </button>
+  </footer>
+
+  <!-- Floating Live Order Tracker Bar (Shown when customer has active order) -->
+  <div class="floating-tracker-bar hidden" id="floatingTrackerBar">
+    <div class="floating-tracker-content">
+      <div class="tracker-live-beacon"></div>
+      <div class="floating-tracker-text">
+        <div class="floating-tracker-title">
+          <span>⚡ Active Order</span>
+          <b id="floatingTrackOrderId">#FC-1001</b>
+        </div>
+        <div class="floating-tracker-stage" id="floatingTrackStatusText">Kitchen Cooking...</div>
+      </div>
+    </div>
+    <button type="button" class="floating-tracker-btn" id="btnOpenFloatingTracker">
+      <span>Track</span>
+      <span>➔</span>
+    </button>
+  </div>
+
+  <!-- Sticky Bottom Cart Floating Bar -->
+  <div class="bottom-bar" id="bottomBar">
+    <button class="bottom-bar-btn" id="bottomBarBtn">
+      <span id="barCount">🛒 0 Items</span>
+      <span id="barTotal">Rs 0</span>
+    </button>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <!-- =======================================================
+       MODAL 1: ITEM DETAIL POPUP (BIG CATCHY IMAGE & SIZES)
+       ======================================================= -->
+  <div class="item-modal" id="itemDetailModal">
+    <div class="item-modal-hero">
+      <img id="modalHeroImg" src="" alt="Food Item">
+      <button class="item-modal-close" id="closeItemModal">✕</button>
+    </div>
+    <div class="item-modal-body">
+      <span class="item-modal-cat" id="modalCatTag">Deals</span>
+      <h2 class="item-modal-title" id="modalItemTitle">Item Title</h2>
+      <p class="item-modal-desc" id="modalItemDesc">Item description details...</p>
+
+      <!-- Multi-size picker (if applicable) -->
+      <div class="item-modal-sizes" id="modalSizesContainer">
+        <label id="lblSelectSize">Select Size / سائز منتخب کریں:</label>
+        <div class="modal-sizes-group" id="modalSizesList"></div>
+      </div>
+
+      <!-- Special Cooking Request for this item -->
+      <div class="item-modal-notes">
+        <textarea id="modalSpecialNotes" rows="2" placeholder="Item instructions (e.g. extra sauce, no onions, less spicy)..."></textarea>
+      </div>
+    </div>
+
+    <!-- Modal Sticky Bottom Bar -->
+    <div class="item-modal-footer">
+      <div class="qty-ctrl">
+        <button id="modalQtyMinus">−</button>
+        <span id="modalQtyVal">1</span>
+        <button id="modalQtyPlus">+</button>
+      </div>
+      <button class="modal-add-btn" id="modalAddToCartBtn">
+        <span id="modalAddLabel">Add to Order</span>
+        <span id="modalAddPrice" style="direction:ltr">Rs 0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       MODAL 2: CART SHEET WITH SPECIAL INSTRUCTIONS
+       ======================================================= -->
+  <div class="cart-sheet" id="cartSheet">
+    <div class="sheet-header">
+      <h3 id="t_cart">Your Order</h3>
+      <button class="close-sheet-btn" id="closeCartSheet">✕</button>
+    </div>
+
+    <!-- Cart items list -->
+    <div class="cart-items-list" id="cartLines"></div>
+
+    <!-- Order Type Selector (Home / Office Delivery) -->
+    <div class="order-types-seg" id="orderTypeSeg">
+      <label class="on" data-type="delivery">
+        <input type="radio" name="ot" value="delivery" checked>
+        <span id="o_del">🛵 Home / Office Delivery</span>
+      </label>
+      <label data-type="dinein">
+        <input type="radio" name="ot" value="dinein">
+        <span id="o_din">🍽️ Dine-in</span>
+      </label>
+      <label data-type="pickup">
+        <input type="radio" name="ot" value="pickup">
+        <span id="o_pick">🛍️ Pickup</span>
+      </label>
+    </div>
+
+    <!-- Customer Details Form -->
+    <input type="text" class="form-input" id="custName" placeholder="Your Name *" autocomplete="name">
+    <input type="tel" class="form-input" id="custPhone" placeholder="Phone Number (e.g. 03001234567) *" autocomplete="tel">
+    <textarea class="form-input" id="custAddress" rows="2" placeholder="Delivery Address (Home / Office / Shop / Street) *"></textarea>
+
+    <!-- Dedicated Table Controls for Dine-In -->
+    <div id="cartTableContainer" style="display:none;margin:4px 0 8px">
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="text" class="form-input" id="cartTableInput" placeholder="Table Number (e.g. 5) *" style="margin:0;flex:1">
+        <button type="button" class="admin-btn admin-btn-outline" id="cartBtnPickTable" style="padding:10px 14px;white-space:nowrap;font-size:12.5px;font-weight:800;border-radius:12px">
+          <span>🔢</span>
+          <span id="cartPickTableLabel">Pick Table</span>
+        </button>
+      </div>
+      <div class="quick-table-chips" id="quickTableChips" style="margin-top:6px">
+        <button type="button" class="quick-tbl-btn" data-tbl-select="1">Table 1</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="2">Table 2</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="3">Table 3</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="4">Table 4</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="5">Table 5</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="6">Table 6</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="7">Table 7</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="8">Table 8</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="9">Table 9</button>
+        <button type="button" class="quick-tbl-btn" data-tbl-select="10">Table 10</button>
+      </div>
+    </div>
+
+    <!-- CART-WIDE SPECIAL INSTRUCTIONS -->
+    <textarea class="form-input" id="cartSpecialInstructions" rows="2" placeholder="Special cooking / delivery instructions (e.g. extra sauce, no onions, call before arriving)..."></textarea>
+
+    <!-- Bill Summary Breakdown -->
+    <div class="bill-summary">
+      <div class="bill-row">
+        <span id="t_subtotal">Food Total</span>
+        <span id="cartSubtotal" style="direction:ltr">Rs 0</span>
+      </div>
+      <div class="bill-row" id="deliveryRow">
+        <span id="t_delivery">Delivery Fee</span>
+        <span id="cartDelivery" style="direction:ltr">Rs 120</span>
+      </div>
+      <div class="bill-row total">
+        <span id="t_grand">Grand Total</span>
+        <span id="cartGrandTotal" style="direction:ltr">Rs 0</span>
+      </div>
+    </div>
+
+    <!-- WhatsApp Submit Order -->
+    <button class="whatsapp-send-btn" id="sendOrderBtn">
+      <svg viewBox="0 0 24 24">
+        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.53 7.34C9.36 7.34 9.08 7.4 8.84 7.66C8.61 7.93 7.96 8.54 7.96 9.77C7.96 11 8.86 12.19 8.99 12.36C9.12 12.53 10.76 15.06 13.28 16.14C15.37 17.04 15.8 16.86 16.26 16.82C16.72 16.78 17.75 16.21 17.96 15.62C18.17 15.03 18.17 14.52 18.11 14.41C18.05 14.3 17.88 14.24 17.62 14.11C17.36 13.99 16.1 13.37 15.86 13.29C15.63 13.2 15.46 13.16 15.3 13.41C15.13 13.66 14.65 14.24 14.5 14.41C14.36 14.58 14.21 14.6 13.95 14.48C13.7 14.35 12.87 14.08 11.89 13.21C11.12 12.53 10.61 11.68 10.45 11.43C10.3 11.18 10.43 11.04 10.56 10.91C10.68 10.79 10.83 10.6 10.97 10.43C11.11 10.26 11.16 10.14 11.25 9.97C11.34 9.8 11.29 9.65 11.23 9.53C11.16 9.4 10.7 8.27 10.5 7.8C10.31 7.34 10.12 7.4 9.97 7.4L9.53 7.34Z"/>
+      </svg>
+      <span id="sendBtnLabel">Send Order on WhatsApp</span>
+    </button>
+  </div>
+
+  <!-- =======================================================
+       MODAL 2B: QUICK TABLE PICKER POPUP
+       ======================================================= -->
+  <div class="table-picker-modal" id="tablePickerModal">
+    <button class="auth-close-btn" id="closeTablePicker">✕</button>
+    <div style="font-size:32px;margin-bottom:4px">🍽️</div>
+    <h3 id="tablePickerTitle" style="font-size:18px;margin-bottom:2px">Select Your Table</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px" id="tablePickerDesc">Choose table for fast dine-in service</p>
+
+    <!-- Table Numbers Grid (1 to 16) -->
+    <div class="table-grid">
+      <button type="button" class="table-grid-btn" data-tbl-select="1">Table 1</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="2">Table 2</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="3">Table 3</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="4">Table 4</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="5">Table 5</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="6">Table 6</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="7">Table 7</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="8">Table 8</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="9">Table 9</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="10">Table 10</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="11">Table 11</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="12">Table 12</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="13">Table 13</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="14">Table 14</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="15">Table 15</button>
+      <button type="button" class="table-grid-btn" data-tbl-select="16">Table 16</button>
+    </div>
+
+    <!-- Custom Table Input -->
+    <div style="display:flex;gap:6px;margin-top:10px">
+      <input type="text" class="form-input" id="customTableInput" placeholder="Custom Table # (e.g. 22)" style="margin:0;flex:1">
+      <button type="button" class="admin-btn admin-btn-primary" id="btnApplyCustomTable" style="padding:10px 16px;white-space:nowrap">Set</button>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       MODAL 2C: CUSTOMER LIVE 4-STAGE ORDER STATUS TRACKER
+       ======================================================= -->
+  <div class="tracker-modal" id="customerTrackerModal">
+    <div class="tracker-header">
+      <button class="auth-close-btn" id="closeCustomerTracker" style="position:absolute;top:0;right:0">✕</button>
+      <div class="tracker-icon-pulse">⚡</div>
+      <h3 style="font-size:20px;font-weight:900;margin:4px 0" id="trackerTitle">Live Order Tracking</h3>
+      <p style="font-size:12.5px;color:var(--muted)">
+        Order #<b id="trackerOrderId" style="color:var(--ink)">-</b> • <span id="trackerOrderType">-</span>
+      </p>
+    </div>
+
+    <!-- Stepper 4 Steps -->
+    <div class="workflow-stepper">
+      <!-- Step 1: Order Received / Sent to Cashier -->
+      <div class="step-row" id="trackStepRow1">
+        <div class="step-icon-circle">1</div>
+        <div class="step-info">
+          <div class="step-title" id="trackStep1Title">Order Received</div>
+          <div class="step-desc" id="trackStep1Desc">Sent to Fri-Chicks system & WhatsApp</div>
+        </div>
+      </div>
+
+      <!-- Step 2: Cashier Verified / Kitchen Prep -->
+      <div class="step-row" id="trackStepRow2">
+        <div class="step-icon-circle">2</div>
+        <div class="step-info">
+          <div class="step-title" id="trackStep2Title">Cashier Confirmed</div>
+          <div class="step-desc" id="trackStep2Desc">Order accepted & routed to kitchen cooking line</div>
+        </div>
+      </div>
+
+      <!-- Step 3: Kitchen Cooking / Ready -->
+      <div class="step-row" id="trackStepRow3">
+        <div class="step-icon-circle">3</div>
+        <div class="step-info">
+          <div class="step-title" id="trackStep3Title">Kitchen Cooking / Ready</div>
+          <div class="step-desc" id="trackStep3Desc">Chef is preparing your fresh meal with secret recipe</div>
+        </div>
+      </div>
+
+      <!-- Step 4: Served / Delivered -->
+      <div class="step-row" id="trackStepRow4">
+        <div class="step-icon-circle">4</div>
+        <div class="step-info">
+          <div class="step-title" id="trackStep4Title">Served / Delivered</div>
+          <div class="step-desc" id="trackStep4Desc">Enjoy your delicious meal! Secret recipe since 2002</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items Summary in Tracker -->
+    <div class="tracker-order-summary">
+      <div style="font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Order Summary</div>
+      <div id="trackerItemsSummary"></div>
+    </div>
+
+    <div style="margin-top:auto;padding-top:14px">
+      <button type="button" class="admin-btn admin-btn-outline" style="width:100%;padding:12px;font-weight:800;cursor:pointer" id="btnTrackerContinue" onclick="closeCustomerTracker()">
+        Continue Browsing Menu / واپس مینو دیکھیں
+      </button>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       MODAL 3: PASSWORD / PIN & BIOMETRIC AUTH POPUP
+       (Category-Wise: Super Admin, Cashier POS, Kitchen KDS)
+       ======================================================= -->
+  <div class="auth-modal" id="authModal">
+    <button class="auth-close-btn" id="closeAuthModal" onclick="closeAuthModal()">✕</button>
+    <div class="auth-icon">🔒</div>
+    <h3 id="authModalTitle">Staff & Owner Portal</h3>
+
+    <!-- Category / Role Selector Tabs -->
+    <div class="auth-role-tabs" id="authRoleTabs">
+      <button type="button" class="auth-role-btn active" data-auth-role="admin">
+        <span>👑</span>
+        <span>Admin</span>
+      </button>
+      <button type="button" class="auth-role-btn" data-auth-role="cashier">
+        <span>💵</span>
+        <span>Cashier</span>
+      </button>
+      <button type="button" class="auth-role-btn" data-auth-role="kitchen">
+        <span>👨‍🍳</span>
+        <span>Kitchen</span>
+      </button>
+    </div>
+    <p id="authRolePrompt" style="font-size:12px;color:var(--muted);margin:4px 0 10px">
+      Enter Super Admin PIN (Default: 1234)
+    </p>
+
+    <!-- 4-Pin Dots Indicator -->
+    <div class="pin-display">
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+    </div>
+
+    <!-- Numeric Keypad -->
+    <div class="keypad">
+      <button class="key-btn" data-num="1">1</button>
+      <button class="key-btn" data-num="2">2</button>
+      <button class="key-btn" data-num="3">3</button>
+      <button class="key-btn" data-num="4">4</button>
+      <button class="key-btn" data-num="5">5</button>
+      <button class="key-btn" data-num="6">6</button>
+      <button class="key-btn" data-num="7">7</button>
+      <button class="key-btn" data-num="8">8</button>
+      <button class="key-btn" data-num="9">9</button>
+      <button class="key-btn action" id="keyClear" onclick="curEnteredPin='';updatePinDots()">Clear</button>
+      <button class="key-btn" data-num="0">0</button>
+      <button class="key-btn action" id="keyDel">⌫</button>
+    </div>
+
+    <!-- Biometric Fingerprint Button -->
+    <button class="biometric-btn" id="btnBiometricAuth">
+      <span>👆</span>
+      <span>Login with Fingerprint / Face ID</span>
+    </button>
+  </div>
+
+  <!-- =======================================================
+       MODAL 4: FULL OWNER ADMIN STUDIO & ORDER MANAGEMENT
+       (Dark Mode + Safe Status Management + WebP Tech + QR Studio)
+       ======================================================= -->
+  <div class="admin-modal" id="adminModal">
+    <div class="admin-nav">
+      <h3>⚙️ Fri-Chicks Admin Studio</h3>
+      <div class="admin-header-actions">
+        <!-- Dark Mode Toggle Button -->
+        <button class="admin-theme-btn" id="adminThemeBtn">🌙 Dark</button>
+        <button class="admin-close" id="closeAdminBtn">✕</button>
+      </div>
+    </div>
+
+    <!-- STATION SWITCHER BAR -->
+    <div class="admin-station-bar" id="adminStationBar">
+      <button type="button" class="station-btn active" data-station="admin">
+        <span>👑</span>
+        <span>Super Admin</span>
+      </button>
+      <button type="button" class="station-btn" data-station="cashier">
+        <span>💵</span>
+        <span>Cashier POS</span>
+      </button>
+      <button type="button" class="station-btn" data-station="kitchen">
+        <span>👨‍🍳</span>
+        <span>Kitchen KDS</span>
+      </button>
+    </div>
+
+    <!-- Tabs Header (Only visible in Super Admin mode) -->
+    <div class="admin-tabs" id="adminTabsNav">
+      <div class="admin-tab active" data-atab="orders">
+        📋 Live Orders <span class="tab-order-badge" id="tabOrdersBadge" style="display:none">0</span>
+      </div>
+      <div class="admin-tab" data-atab="menu">🍔 Menu Items</div>
+      <div class="admin-tab" data-atab="add">➕ Add Item</div>
+      <div class="admin-tab" data-atab="qr">📱 QR Studio</div>
+      <div class="admin-tab" data-atab="settings">⚙️ Settings</div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- TAB 1: LIVE ORDER MANAGEMENT SYSTEM (SAFE STATUS CONTROLS) -->
+      <div class="admin-tab-pane active" id="paneOrders">
+        <div class="oms-stats-row" id="omsStatsRow">
+          <div class="oms-stat-card">
+            <small>Orders Today</small>
+            <b id="omsTotalToday">0</b>
+          </div>
+          <div class="oms-stat-card">
+            <small>In Kitchen</small>
+            <b id="omsActiveKitchen" style="color:var(--orange-d)">0</b>
+          </div>
+          <div class="oms-stat-card">
+            <small>Sales Today</small>
+            <b id="omsTodayRevenue" style="color:var(--green)">Rs 0</b>
+          </div>
+        </div>
+
+        <!-- Filter Chips for Orders -->
+        <div class="oms-filter-chips" id="omsFilterChips">
+          <button class="oms-filter on" data-ofilter="all">All Orders</button>
+          <button class="oms-filter" data-ofilter="active">⚡ Active / Kitchen</button>
+          <button class="oms-filter" data-ofilter="completed">✓ Completed</button>
+        </div>
+
+        <div id="ordersListContainer"></div>
+      </div>
+
+      <!-- TAB 2: MENU ITEMS LIST & AVAILABILITY -->
+      <div class="admin-tab-pane" id="paneMenu">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <b>Active Menu (<span id="adminTotalItems">0</span> items)</b>
+          <button class="admin-btn admin-btn-primary" id="btnAdminAddNew">+ Add Item</button>
+        </div>
+        <div id="adminItemsList"></div>
+      </div>
+
+      <!-- TAB 3: ADD / EDIT ITEM WITH AUTOMATIC WEBP CONVERTER -->
+      <div class="admin-tab-pane" id="paneAdd">
+        <h4 id="adminFormHeading" style="margin-bottom:10px">Add New Food Item</h4>
+        <input type="hidden" id="editItemId">
+        
+        <label style="font-size:12px;font-weight:700">English Name *</label>
+        <input type="text" class="form-input" id="inpItemName" placeholder="e.g. Crispy Zinger Burger">
+
+        <label style="font-size:12px;font-weight:700;margin-top:6px;display:block">Urdu Name (نام اردو میں) *</label>
+        <input type="text" class="form-input" id="inpItemNameUr" placeholder="مثال: کرسپی زنگر برگر" dir="rtl">
+
+        <label style="font-size:12px;font-weight:700;margin-top:6px;display:block">Category *</label>
+        <select class="form-input" id="inpItemCat">
+          <option value="deals">Special Deals</option>
+          <option value="pizza">Pizza</option>
+          <option value="burger">Burgers</option>
+          <option value="fried">Fried Chicken & Fries</option>
+          <option value="drinks">Cold Drinks</option>
+        </select>
+
+        <label style="font-size:12px;font-weight:700;margin-top:6px;display:block">Price Type & Amounts (Rs) *</label>
+        <div style="display:flex;gap:6px;margin:5px 0">
+          <input type="number" class="form-input" id="inpPriceSingle" placeholder="Single Price (Rs)">
+          <input type="text" class="form-input" id="inpSizesPrices" placeholder="Or S,M,L (e.g. 650,1150,1750)">
+        </div>
+        <small style="color:var(--muted)">Enter single price OR comma separated 3 sizes for S, M, L.</small>
+
+        <label style="font-size:12px;font-weight:700;margin-top:8px;display:block">Description (English)</label>
+        <textarea class="form-input" id="inpItemDesc" rows="2" placeholder="Ingredients and details..."></textarea>
+
+        <label style="font-size:12px;font-weight:700;margin-top:4px;display:block">Description (Urdu)</label>
+        <textarea class="form-input" id="inpItemDescUr" rows="2" placeholder="تفصیل اردو میں..." dir="rtl"></textarea>
+
+        <!-- AUTOMATIC WEBP CONVERTER -->
+        <label style="font-size:12px;font-weight:700;margin-top:8px;display:block">
+          Food Photo (<span style="color:var(--green)">⚡ Auto-Converted to WebP</span>)
+        </label>
+        <div class="webp-upload-box" onclick="$('inpWebpFile').click()">
+          <span style="font-size:26px">📷</span>
+          <p style="font-size:13px;font-weight:700;margin-top:4px">Tap to upload photo from mobile camera or PC</p>
+          <p style="font-size:11px;color:var(--muted)">Automatically converts to lightweight WebP format. No extra effort needed!</p>
+          <input type="file" id="inpWebpFile" accept="image/*" style="display:none">
+          <div id="webpPreviewStatus"></div>
+        </div>
+        <input type="hidden" id="inpWebpData">
+
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="admin-btn admin-btn-primary" style="flex:1;padding:12px" id="btnSaveItem">💾 Save Item</button>
+          <button class="admin-btn admin-btn-outline" style="padding:12px" id="btnCancelEdit">Cancel</button>
+        </div>
+      </div>
+
+      <!-- TAB 4: SMART QR CODE STUDIO & DOWNLOAD -->
+      <div class="admin-tab-pane" id="paneQR">
+        <h4 style="margin-bottom:6px">📱 Table Stand QR Code Generator</h4>
+        <p style="font-size:12.5px;color:var(--muted)">
+          Generate high-resolution printable QR codes with the Fri-Chicks logo for table acrylic stands or takeaway flyers.
+        </p>
+
+        <div style="margin:12px 0">
+          <label style="font-size:12.5px;font-weight:700">Table Number (Optional):</label>
+          <input type="text" class="form-input" id="qrTableInput" placeholder="e.g. Table 5 (or leave blank for main menu)">
+        </div>
+
+        <div class="qr-preview-box">
+          <canvas id="qrCanvas" width="500" height="660"></canvas>
+        </div>
+
+        <button class="admin-btn admin-btn-primary" style="width:100%;padding:14px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px" id="btnDownloadQR">
+          <span>⬇️</span>
+          <span>Download Print-Ready QR Standee (PNG)</span>
+        </button>
+      </div>
+
+      <!-- TAB 5: RESTAURANT SETTINGS & BACKUP -->
+      <div class="admin-tab-pane" id="paneSettings">
+        <h4 style="margin-bottom:10px">Restaurant Configuration</h4>
+
+        <label style="font-size:12px;font-weight:700">WhatsApp Number (Without '+')</label>
+        <input type="text" class="form-input" id="cfgWhatsApp">
+
+        <label style="font-size:12px;font-weight:700;margin-top:8px;display:block">Delivery Fee (Rs)</label>
+        <input type="number" class="form-input" id="cfgDeliveryFee">
+
+        <label style="font-size:12px;font-weight:700;margin-top:8px;display:block">Free Delivery Minimum (Rs)</label>
+        <input type="number" class="form-input" id="cfgFreeDelivery">
+
+        <div style="background:#F9FAFB;padding:12px 14px;border-radius:14px;border:1px solid var(--line);margin-top:14px">
+          <b style="font-size:13px;display:block;margin-bottom:8px">🔐 Category-Wise Station Passwords (الگ الگ پاس ورڈز)</b>
+          
+          <label style="font-size:12px;font-weight:700;display:block">👑 Super Admin PIN (مکمل اونر کنٹرول)</label>
+          <input type="password" class="form-input" id="cfgAdminPin" placeholder="Default: 1234" maxlength="6">
+
+          <label style="font-size:12px;font-weight:700;margin-top:8px;display:block">💵 Cashier POS PIN (کاؤنٹر کیشئر لاگ ان)</label>
+          <input type="password" class="form-input" id="cfgCashierPin" placeholder="Default: 2222" maxlength="6">
+
+          <label style="font-size:12px;font-weight:700;margin-top:8px;display:block">👨‍🍳 Kitchen KDS PIN (کچن شیف ڈسپلے لاگ ان)</label>
+          <input type="password" class="form-input" id="cfgKitchenPin" placeholder="Default: 3333" maxlength="6">
+          <small style="color:var(--muted);font-size:11px;display:block;margin-top:4px">Har role ka alag password rakhein taake staff sirf apna station use kar sakay.</small>
+        </div>
+
+        <button class="admin-btn admin-btn-primary" style="width:100%;padding:12px;margin-top:14px" id="btnSaveConfig">
+          💾 Save Settings
+        </button>
+
+        <hr style="margin:24px 0;border:0;border-top:1px dashed var(--line)">
+
+        <h4 style="margin-bottom:8px">Factory Defaults & Reset</h4>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">
+          Restore original factory items & prices.
+        </p>
+        <button class="admin-btn admin-btn-danger" style="width:100%;padding:10px" id="btnResetMenu">
+          🔄 Restore Default Fri-Chicks Menu
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Modular Professional Scripts -->
+<script src="js/config.js"></script>
+<script src="js/translations.js"></script>
+<script src="js/menu-data.js"></script>
+<script src="js/qr-generator.js"></script>
+<script src="js/biometrics.js"></script>
+<script src="js/order-manager.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

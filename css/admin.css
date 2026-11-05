@@ -1,0 +1,574 @@
+/* ==========================================================================
+   OWNER ADMIN STUDIO & ORDER MANAGEMENT SYSTEM (OMS)
+   Full Kitchen Display, Safe Status Controls, WebP Uploader, QR Code & Dark Mode
+   ========================================================================== */
+
+.admin-modal{
+  position:fixed;
+  inset:0;
+  max-width:540px;
+  margin:0 auto;
+  background:#FFFFFF;
+  color:#1C1917;
+  z-index:95;
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+  transition:background 0.25s, color 0.25s;
+}
+.admin-modal.open{display:flex}
+
+/* Header */
+.admin-nav{
+  background:#1E1B18;
+  color:#FFFFFF;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid #333;
+}
+.admin-nav h3{
+  font-size:16.5px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.admin-header-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.admin-theme-btn{
+  background:#332E27;
+  color:#FCD34D;
+  border:1px solid #443E35;
+  border-radius:18px;
+  padding:4px 10px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+.admin-close{
+  background:#332E27;
+  color:#fff;
+  border:0;
+  border-radius:50%;
+  width:32px;
+  height:32px;
+  font-size:16px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Tabs */
+.admin-tabs{
+  display:flex;
+  background:#F3F4F6;
+  border-bottom:1px solid #E5E7EB;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.admin-tabs::-webkit-scrollbar{display:none}
+.admin-tab{
+  flex:1;
+  min-width:72px;
+  padding:11px 6px;
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:2.5px solid transparent;
+  white-space:nowrap;
+  position:relative;
+}
+.admin-tab.active{
+  color:var(--orange-d);
+  background:#fff;
+  border-bottom-color:var(--orange-d);
+}
+.tab-order-badge{
+  background:var(--danger);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  padding:1px 6px;
+  border-radius:10px;
+  margin-inline-start:4px;
+}
+
+.admin-content{
+  flex:1;
+  overflow-y:auto;
+  padding:16px;
+}
+.admin-tab-pane{display:none}
+.admin-tab-pane.active{display:block}
+
+/* ==========================================================================
+   ORDER MANAGEMENT SYSTEM (OMS / KDS)
+   SAFE STATUS MANAGEMENT WITH DROPDOWN + CONFIRMATION
+   ========================================================================== */
+.oms-stats-row{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:8px;
+  margin-bottom:14px;
+}
+.oms-stat-card{
+  background:#F9FAFB;
+  border:1px solid #E5E7EB;
+  border-radius:14px;
+  padding:10px 8px;
+  text-align:center;
+}
+.oms-stat-card small{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
+.oms-stat-card b{font-size:16px;font-weight:900;color:var(--ink)}
+
+.oms-filter-chips{
+  display:flex;
+  gap:6px;
+  margin-bottom:12px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.oms-filter{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:16px;
+  padding:4px 10px;
+  font-size:11.5px;
+  font-weight:700;
+  cursor:pointer;
+}
+.oms-filter.on{
+  background:var(--orange);
+  color:#fff;
+  border-color:var(--orange);
+}
+
+/* Order Ticket Card */
+.order-ticket{
+  background:#FFFFFF;
+  border:1.5px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,0.04);
+  position:relative;
+}
+.order-ticket.status-pending{border-inline-start:6px solid #F59E0B}
+.order-ticket.status-preparing{border-inline-start:6px solid #3B82F6}
+.order-ticket.status-onway{border-inline-start:6px solid #8B5CF6}
+.order-ticket.status-completed{border-inline-start:6px solid #10B981}
+.order-ticket.status-cancelled{border-inline-start:6px solid #EF4444;opacity:0.65}
+
+.ticket-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:8px;
+}
+.ticket-id{
+  font-size:14px;
+  font-weight:900;
+  color:var(--ink);
+}
+.ticket-time{
+  font-size:11px;
+  color:var(--muted);
+}
+.status-pill{
+  display:inline-block;
+  padding:3px 9px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.pill-pending{background:#FEF3C7;color:#D97706}
+.pill-preparing{background:#DBEAFE;color:#2563EB}
+.pill-onway{background:#EDE9FE;color:#7C3AED}
+.pill-completed{background:#D1FAE5;color:#059669}
+.pill-cancelled{background:#FEE2E2;color:#DC2626}
+
+.ticket-customer{
+  font-size:13px;
+  color:var(--ink);
+  margin-bottom:8px;
+  line-height:1.4;
+}
+.ticket-customer small{
+  color:var(--muted);
+  display:block;
+  font-size:11.5px;
+}
+
+.ticket-items{
+  background:#F9FAFB;
+  border-radius:10px;
+  padding:8px 10px;
+  margin:8px 0;
+  font-size:12.5px;
+}
+.ticket-item-row{
+  display:flex;
+  justify-content:space-between;
+  padding:2px 0;
+}
+.ticket-instructions{
+  color:var(--orange-d);
+  font-size:11.5px;
+  font-weight:700;
+  margin-top:4px;
+  display:block;
+}
+
+.ticket-total{
+  display:flex;
+  justify-content:space-between;
+  font-weight:900;
+  font-size:14.5px;
+  margin-top:8px;
+  padding-top:6px;
+  border-top:1px dashed #E5E7EB;
+}
+
+/* Safe Status Controls: Dropdown + Action Buttons */
+.ticket-status-control-box{
+  background:#F3F4F6;
+  border-radius:12px;
+  padding:8px 10px;
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.ticket-status-label{
+  font-size:11.5px;
+  font-weight:800;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.ticket-status-select{
+  flex:1;
+  background:#fff;
+  border:1.5px solid var(--line);
+  border-radius:8px;
+  padding:6px 8px;
+  font-size:12px;
+  font-weight:700;
+  color:var(--ink);
+  cursor:pointer;
+  outline:none;
+}
+
+.ticket-actions{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+.ticket-btn{
+  flex:1;
+  min-width:70px;
+  padding:8px 6px;
+  border:0;
+  border-radius:10px;
+  font-size:11.5px;
+  font-weight:800;
+  cursor:pointer;
+  text-align:center;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.btn-whatsapp-cust{background:#DCFCE7;color:#15803D}
+.btn-call-cust{background:#E0E7FF;color:#3730A3}
+.btn-status-next{background:linear-gradient(135deg,var(--orange) 0%,var(--orange-d) 100%);color:#fff}
+.btn-print-kot{background:#F3F4F6;color:#374151}
+
+/* Admin Item Card */
+.admin-item-card{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  margin-bottom:8px;
+  background:#fff;
+}
+.admin-item-thumb{
+  width:50px;
+  height:50px;
+  border-radius:10px;
+  object-fit:cover;
+  background:#eee;
+}
+.admin-item-info{flex:1;min-width:0}
+.admin-item-info b{font-size:13.5px;display:block}
+.admin-item-info span{font-size:12px;color:var(--muted)}
+.admin-item-actions{display:flex;gap:5px}
+
+.admin-btn{
+  border:0;
+  padding:7px 12px;
+  border-radius:10px;
+  font-size:12.5px;
+  font-weight:700;
+  cursor:pointer;
+}
+.admin-btn-primary{background:linear-gradient(135deg,var(--orange) 0%,var(--orange-d) 100%);color:#fff}
+.admin-btn-danger{background:#FEE2E2;color:var(--danger)}
+.admin-btn-outline{border:1px solid var(--line);background:#fff;color:var(--ink)}
+
+/* WebP Upload Box */
+.webp-upload-box{
+  border:2px dashed var(--orange);
+  border-radius:14px;
+  padding:16px;
+  text-align:center;
+  background:var(--orange-light);
+  margin:10px 0;
+  cursor:pointer;
+}
+.webp-badge{
+  display:inline-block;
+  background:#10B981;
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  padding:3px 9px;
+  border-radius:10px;
+  margin-top:6px;
+}
+
+/* QR Code Studio */
+.qr-preview-box{
+  background:#fff;
+  border:2px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  text-align:center;
+  margin:14px 0;
+  box-shadow:0 4px 16px rgba(0,0,0,0.06);
+}
+#qrCanvas{
+  max-width:280px;
+  width:100%;
+  height:auto;
+  margin:0 auto;
+  border-radius:12px;
+  display:block;
+}
+
+/* ==========================================================================
+   ADMIN DARK MODE (PROFESSIONAL SLATE/CHARCOAL THEME)
+   ========================================================================== */
+.admin-modal.admin-dark{
+  background:#111827;
+  color:#F9FAFB;
+}
+.admin-dark .admin-tabs{
+  background:#1F2937;
+  border-bottom-color:#374151;
+}
+.admin-dark .admin-tab{
+  color:#9CA3AF;
+}
+.admin-dark .admin-tab.active{
+  background:#111827;
+  color:#F5A12E;
+  border-bottom-color:#F5A12E;
+}
+.admin-dark .admin-item-card{
+  background:#1F2937;
+  border-color:#374151;
+  color:#F9FAFB;
+}
+.admin-dark .admin-item-info span{
+  color:#9CA3AF;
+}
+.admin-dark .admin-btn-outline{
+  background:#1F2937;
+  border-color:#374151;
+  color:#F9FAFB;
+}
+.admin-dark .form-input{
+  background:#1F2937;
+  border-color:#374151;
+  color:#F9FAFB;
+}
+.admin-dark .form-input:focus{
+  border-color:#F5A12E;
+}
+.admin-dark .oms-stat-card{
+  background:#1F2937;
+  border-color:#374151;
+}
+.admin-dark .oms-stat-card b{
+  color:#F9FAFB;
+}
+.admin-dark .order-ticket{
+  background:#1F2937;
+  border-color:#374151;
+  color:#F9FAFB;
+}
+.admin-dark .ticket-id{
+  color:#F9FAFB;
+}
+.admin-dark .ticket-customer{
+  color:#F9FAFB;
+}
+.admin-dark .ticket-items{
+  background:#111827;
+  color:#E5E7EB;
+}
+.admin-dark .ticket-total{
+  border-top-color:#374151;
+}
+.admin-dark .oms-filter{
+  background:#1F2937;
+  border-color:#374151;
+  color:#D1D5DB;
+}
+.admin-dark .ticket-status-control-box{
+  background:#111827;
+}
+.admin-dark .ticket-status-select{
+  background:#1F2937;
+  border-color:#374151;
+  color:#F9FAFB;
+}
+.admin-dark .btn-print-kot{
+  background:#374151;
+  color:#F9FAFB;
+}
+.admin-dark .webp-upload-box{
+  background:#1E293B;
+  border-color:#D97706;
+}
+.admin-dark .qr-preview-box{
+  background:#1F2937;
+  border-color:#374151;
+}
+/* ==========================================================================
+   ROLE / STATION SWITCHER & KITCHEN KDS DISPLAY
+   ========================================================================== */
+.admin-station-bar{
+  background:#111827;
+  padding:8px 12px;
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  border-bottom:1px solid #374151;
+}
+.station-btn{
+  flex:1;
+  background:#1F2937;
+  color:#9CA3AF;
+  border:1px solid #374151;
+  border-radius:10px;
+  padding:7px 10px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  transition:all 0.15s ease;
+}
+.station-btn.active{
+  background:var(--orange);
+  color:#fff;
+  border-color:var(--orange-d);
+  box-shadow:0 2px 8px rgba(245,161,46,0.3);
+}
+
+/* Kitchen KDS Card (High visibility for chef in kitchen) */
+.kds-card{
+  background:#FFF;
+  border:2.5px solid #3B82F6;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 6px 20px rgba(59,130,246,0.12);
+}
+.admin-dark .kds-card{
+  background:#1F2937;
+  border-color:#3B82F6;
+}
+.kds-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-bottom:10px;
+  border-bottom:2px dashed #E5E7EB;
+  margin-bottom:12px;
+}
+.kds-table-badge{
+  background:#FEF08A;
+  color:#854D0E;
+  font-size:16px;
+  font-weight:900;
+  padding:4px 12px;
+  border-radius:10px;
+}
+.kds-timer{
+  font-size:12px;
+  font-weight:800;
+  color:#EF4444;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+.kds-items-list{
+  font-size:15px;
+  line-height:1.7;
+}
+.kds-item-line{
+  display:flex;
+  justify-content:space-between;
+  padding:4px 0;
+  border-bottom:1px solid #F3F4F6;
+}
+.admin-dark .kds-item-line{border-bottom-color:#374151}
+.kds-item-line b{
+  font-size:17px;
+  color:var(--orange-d);
+}
+.kds-note-box{
+  background:#FEF3C7;
+  color:#B45309;
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:800;
+  margin:10px 0;
+}
+.kds-action-btn{
+  width:100%;
+  background:linear-gradient(135deg,#10B981 0%,#059669 100%);
+  color:#fff;
+  border:0;
+  border-radius:12px;
+  padding:14px;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  box-shadow:0 4px 14px rgba(16,185,129,0.3);
+}
