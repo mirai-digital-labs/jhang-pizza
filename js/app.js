@@ -1698,46 +1698,69 @@ function refreshQRStudio() {
   }
 }
 
-$("btnDownloadQR").addEventListener("click", () => {
-  const canvas = $("qrCanvas");
-  const tableVal = $("qrTableInput").value.trim();
-  const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
-  downloadStandeePNG(canvas, `Fri-Chicks-QR-Standee-${cleanTable}.png`);
-  showToast("Acrylic Standee QR Downloaded!");
-});
+if ($("btnDownloadQR")) {
+  $("btnDownloadQR").addEventListener("click", () => {
+    try {
+      const canvas = $("qrCanvas");
+      const tableVal = $("qrTableInput") ? $("qrTableInput").value.trim() : "";
+      const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
+      downloadStandeePNG(canvas, `Fri-Chicks-QR-Standee-${cleanTable}.png`);
+      showToast("Acrylic Standee QR Downloaded!");
+    } catch(err) {
+      console.error("Standee download error:", err);
+      showToast("Standee download failed: " + err.message, true);
+    }
+  });
+}
 
 if ($("btnDownloadSquareLogoQR")) {
   $("btnDownloadSquareLogoQR").addEventListener("click", () => {
-    const tableVal = $("qrTableInput").value.trim();
-    const siteUrl = $("qrSiteUrlInput") ? $("qrSiteUrlInput").value.trim() : "";
-    const fullUrl = buildQRTargetUrl(tableVal, siteUrl);
+    try {
+      const tableVal = $("qrTableInput") ? $("qrTableInput").value.trim() : "";
+      const siteUrl = $("qrSiteUrlInput") ? $("qrSiteUrlInput").value.trim() : "";
+      const fullUrl = buildQRTargetUrl(tableVal, siteUrl);
 
-    const tempCanvas = document.createElement("canvas");
-    tempCanvas.width = 400;
-    tempCanvas.height = 400;
-    const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = 400;
+      tempCanvas.height = 400;
+      const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
 
-    drawSquareLogoQR(tempCanvas, fullUrl, () => {
-      downloadStandeePNG(tempCanvas, `Fri-Chicks-Sticker-QR-${cleanTable}.png`);
-      showToast("Sticker QR with Logo Downloaded!");
-    });
+      let downloaded = false;
+      const doDownload = () => {
+        if (downloaded) return;
+        downloaded = true;
+        downloadStandeePNG(tempCanvas, `Fri-Chicks-Sticker-QR-${cleanTable}.png`);
+        showToast("Sticker QR with Logo Downloaded!");
+      };
+
+      drawSquareLogoQR(tempCanvas, fullUrl, doDownload);
+      setTimeout(doDownload, 200);
+    } catch(err) {
+      console.error("Square QR error:", err);
+      showToast("Sticker QR download failed: " + err.message, true);
+    }
   });
 }
 
 if ($("btnDownloadPureQR")) {
   $("btnDownloadPureQR").addEventListener("click", () => {
-    const tableVal = $("qrTableInput").value.trim();
-    const siteUrl = $("qrSiteUrlInput") ? $("qrSiteUrlInput").value.trim() : "";
-    const fullUrl = buildQRTargetUrl(tableVal, siteUrl);
+    try {
+      const tableVal = $("qrTableInput") ? $("qrTableInput").value.trim() : "";
+      const siteUrl = $("qrSiteUrlInput") ? $("qrSiteUrlInput").value.trim() : "";
+      const fullUrl = buildQRTargetUrl(tableVal, siteUrl);
 
-    const tempCanvas = document.createElement("canvas");
-    tempCanvas.width = 400;
-    tempCanvas.height = 400;
-    drawPureQR(tempCanvas, fullUrl);
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = 400;
+      tempCanvas.height = 400;
+      drawPureQR(tempCanvas, fullUrl);
 
-    const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
-    downloadStandeePNG(tempCanvas, `Fri-Chicks-Pure-QR-${cleanTable}.png`);
-    showToast("Pure QR Code Downloaded!");
+      const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
+      downloadStandeePNG(tempCanvas, `Fri-Chicks-Pure-QR-${cleanTable}.png`);
+      showToast("Pure QR Code Downloaded!");
+    } catch(err) {
+      console.error("Pure QR error:", err);
+      showToast("Pure QR download failed: " + err.message, true);
+    }
   });
 }
 

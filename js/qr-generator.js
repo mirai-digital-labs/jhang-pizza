@@ -2,6 +2,7 @@
    FRI-CHICKS DIGITAL QR MENU - ISO/IEC 18004 STANDARD QR GENERATOR
    Powered by industry-standard QRCode engine (qrcode.min.js)
    100% compliant, instant scan on iPhone iOS, Android, Samsung & Google Lens
+   Untainted Canvas export supporting both online hosting and local file:// mode
    ========================================================================== */
 
 (function(global) {
@@ -79,11 +80,45 @@
   }
 
   /**
+   * Native vector drawing of Fri-Chicks badge (Never taints canvas, 100% reliable)
+   */
+  function drawVectorLogoBadge(ctx, centerX, centerY, logoSize) {
+    ctx.save();
+    // Inner Orange Badge
+    ctx.fillStyle = "#F5A12E";
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, logoSize / 2 - 1, 0, Math.PI * 2);
+    ctx.fill();
+
+    // White Inner Ring
+    ctx.strokeStyle = "#FFFFFF";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Center "FC" Text
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "900 " + Math.round(logoSize * 0.40) + "px 'Plus Jakarta Sans', system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("FC", centerX, centerY);
+    ctx.restore();
+  }
+
+  /**
    * Helper to draw centered logo with protective white buffer ring
+   * Uses untainted base64 logo data if available to allow local file:// PNG export
    */
   function drawLogoOnCanvas(ctx, centerX, centerY, logoSize, callback) {
+    let finished = false;
+    const notifyDone = function() {
+      if (!finished) {
+        finished = true;
+        if (typeof callback === "function") callback();
+      }
+    };
+
     const logoImg = new Image();
-    const render = function() {
+    const renderImage = function() {
       ctx.save();
       ctx.beginPath();
       ctx.arc(centerX, centerY, logoSize / 2, 0, Math.PI * 2);
@@ -91,22 +126,28 @@
       ctx.clip();
       try {
         ctx.drawImage(logoImg, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
-      } catch (e) {}
+      } catch (e) {
+        drawVectorLogoBadge(ctx, centerX, centerY, logoSize);
+      }
       ctx.restore();
-      if (typeof callback === "function") callback();
+      notifyDone();
     };
 
-    logoImg.onload = render;
+    logoImg.onload = renderImage;
     logoImg.onerror = function() {
-      ctx.fillStyle = "#F5A12E";
-      ctx.font = "900 " + Math.round(logoSize * 0.38) + "px 'Plus Jakarta Sans', sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("FC", centerX, centerY + Math.round(logoSize * 0.12));
-      if (typeof callback === "function") callback();
+      drawVectorLogoBadge(ctx, centerX, centerY, logoSize);
+      notifyDone();
     };
-    logoImg.src = "assets/logo.png";
+
+    // Prefer untainted inline base64 if present
+    if (typeof FC_LOGO_BASE64 !== "undefined" && FC_LOGO_BASE64.length > 100) {
+      logoImg.src = FC_LOGO_BASE64;
+    } else {
+      logoImg.src = "assets/logo.png";
+    }
+
     if (logoImg.complete && logoImg.naturalWidth > 0) {
-      render();
+      renderImage();
     }
   }
 
@@ -175,13 +216,11 @@
     }
 
     // 7. Draw Centered Logo with White Protective Buffer Ring
-    // Level H QR code can tolerate up to 30% area damage.
-    // A 52px circle on 280px QR represents only ~2.7% area, so scanning remains 100% reliable.
     const logoSize = 52;
     const centerX = w / 2;
     const centerY = startY + qrSizePx / 2;
 
-    // Solid White Buffer Circle to protect QR modules from edge overlap
+    // Solid White Buffer Circle
     ctx.fillStyle = "#FFFFFF";
     ctx.beginPath();
     ctx.arc(centerX, centerY, logoSize / 2 + 5, 0, Math.PI * 2);
@@ -246,22 +285,20 @@
       ctx.font = "700 14px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText("Error generating QR", w / 2, h / 2);
+      if (typeof callback === "function") callback();
       return;
     }
 
     // 3. Centered logo with protective white buffer
-    // On 352px QR, a 64px logo covers only ~3.3% area - far below the 30% Level H limit!
     const logoSize = 64;
     const centerX = w / 2;
     const centerY = h / 2;
 
-    // Solid white buffer circle (protects modules from edge blur)
     ctx.fillStyle = "#FFFFFF";
     ctx.beginPath();
     ctx.arc(centerX, centerY, logoSize / 2 + 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Orange ring
     ctx.lineWidth = 3.5;
     ctx.strokeStyle = "#F5A12E";
     ctx.stroke();
@@ -301,14 +338,67 @@
   }
 
   /**
-   * Downloads the Standee or Pure QR as PNG
+   * Downloads the Canvas as PNG file reliably across all browsers and file:// protocol
    */
   function downloadStandeePNG(canvas, filename) {
     if (!canvas) return;
-    const link = document.createElement("a");
-    link.download = filename || "Fri-Chicks-QR-Standee.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    const cleanName = filename || "Fri-Chicks-QR-Standee.png";
+
+    // Attempt 1: Modern canvas.toBlob (Highest performance, doesn't lock UI thread)
+    if (canvas.toBlob) {
+      try {
+        canvas.toBlob(function(blob) {
+          if (blob) {
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.style.display = "none";
+            link.href = blobUrl;
+            link.download = cleanName;
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(function() {
+              try { document.body.removeChild(link); } catch (e) {}
+              URL.revokeObjectURL(blobUrl);
+            }, 500);
+            return;
+          }
+          fallbackToDataUrl(canvas, cleanName);
+        }, "image/png");
+        return;
+      } catch (err) {
+        console.warn("toBlob attempt warning:", err);
+      }
+    }
+
+    // Attempt 2: canvas.toDataURL fallback
+    fallbackToDataUrl(canvas, cleanName);
+  }
+
+  function fallbackToDataUrl(canvas, cleanName) {
+    try {
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.style.display = "none";
+      link.href = dataUrl;
+      link.download = cleanName;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(function() {
+        try { document.body.removeChild(link); } catch (e) {}
+      }, 500);
+    } catch (err) {
+      console.error("Direct download blocked by browser security:", err);
+      // Fallback 3: Open in popup window for manual Right Click -> Save Image As
+      try {
+        const w = window.open("");
+        if (w) {
+          w.document.write("<html><head><title>Fri-Chicks QR</title></head><body style='margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#111;color:#fff;font-family:sans-serif;'>");
+          w.document.write("<img src='" + canvas.toDataURL("image/png") + "' style='max-width:90%;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);'>");
+          w.document.write("<p style='margin-top:16px;font-weight:700;'>Right-click or Long-press the QR image and tap 'Save image as...'</p>");
+          w.document.write("</body></html>");
+        }
+      } catch (e2) {}
+    }
   }
 
   // Export functions to window
