@@ -1687,9 +1687,14 @@ function refreshQRStudio() {
 
   drawTableStandee(canvas, tableVal, siteUrl);
 
+  const fullUrl = buildQRTargetUrl(tableVal, siteUrl);
   const displayEl = $("qrTargetUrlDisplay");
   if (displayEl) {
-    displayEl.textContent = buildQRTargetUrl(tableVal, siteUrl);
+    displayEl.textContent = fullUrl;
+  }
+  const testLink = $("qrTestLink");
+  if (testLink) {
+    testLink.href = fullUrl;
   }
 }
 
@@ -1700,6 +1705,24 @@ $("btnDownloadQR").addEventListener("click", () => {
   downloadStandeePNG(canvas, `Fri-Chicks-QR-Standee-${cleanTable}.png`);
   showToast("Acrylic Standee QR Downloaded!");
 });
+
+if ($("btnDownloadSquareLogoQR")) {
+  $("btnDownloadSquareLogoQR").addEventListener("click", () => {
+    const tableVal = $("qrTableInput").value.trim();
+    const siteUrl = $("qrSiteUrlInput") ? $("qrSiteUrlInput").value.trim() : "";
+    const fullUrl = buildQRTargetUrl(tableVal, siteUrl);
+
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = 400;
+    tempCanvas.height = 400;
+    const cleanTable = tableVal ? String(tableVal).replace(/^(table\s*)/i, "").trim() : "Main";
+
+    drawSquareLogoQR(tempCanvas, fullUrl, () => {
+      downloadStandeePNG(tempCanvas, `Fri-Chicks-Sticker-QR-${cleanTable}.png`);
+      showToast("Sticker QR with Logo Downloaded!");
+    });
+  });
+}
 
 if ($("btnDownloadPureQR")) {
   $("btnDownloadPureQR").addEventListener("click", () => {
